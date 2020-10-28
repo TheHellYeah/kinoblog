@@ -1,4 +1,4 @@
 package com.example.demo.model.service;
 
-public interface StaffService {
+public interface ReviewService {
 }

@@ -3,12 +3,10 @@ package com.example.demo.model.entities;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import java.time.Year;
+import javax.persistence.*;
 import java.util.List;
 
+@Entity
 @Data
 public class Film {
 
@@ -17,12 +15,17 @@ public class Film {
     private long id;
 
     private String name;
-    private Year releaseYear;
     private String preview; //путь к картинке
     private String trailer; //путь к видео на ют
-    private List<FilmGenre> genres;
-    private List<Staff> staff;
     private short length;  //мин.
     private long budget;
     private float rating; //TODO
+
+    @ElementCollection
+    @CollectionTable(name = "genres", joinColumns = @JoinColumn(name = "film_id"))
+    @Enumerated(value = EnumType.STRING)
+    private List<FilmGenre> genres;
+
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Review> reviews;
 }

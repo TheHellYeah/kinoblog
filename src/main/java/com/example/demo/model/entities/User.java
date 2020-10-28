@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -14,13 +15,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    public User(String name) {
-        this.username = name;
-    }
-
     private String firstName;
     private String secondName;
     private String avatar;
+
+    @Temporal(value = TemporalType.DATE)
     private Date birthday;
 
     private String username;
@@ -30,6 +29,8 @@ public class User {
     private boolean verified;
     private String activationCode;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(value = EnumType.STRING)
-    private UserRole role;
+    private Set<UserRole> role;
 }

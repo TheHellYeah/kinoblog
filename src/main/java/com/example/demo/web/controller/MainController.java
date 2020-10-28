@@ -1,12 +1,16 @@
 package com.example.demo.web.controller;
 
-import com.example.demo.model.entities.User;
+import com.example.demo.model.entities.Film;
 import com.example.demo.model.service.FilmService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
+@RequestMapping("/")
 public class MainController {
 
     private FilmService filmService;
@@ -15,8 +19,14 @@ public class MainController {
         this.filmService = filmService;
     }
 
-    @GetMapping("/")
-    public ResponseEntity main() {
-        return ResponseEntity.ok(new User("artem"));
+    @GetMapping
+    public List<Film> index() {
+        return filmService.getAll();
+    }
+
+    @PostMapping
+    public Film addFilm(Film film) {
+        filmService.add(film);
+        return film;
     }
 }
