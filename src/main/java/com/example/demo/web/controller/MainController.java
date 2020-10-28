@@ -22,8 +22,8 @@ public class MainController {
         return filmService.getAll();
     }
 
-    @PostMapping
-    public Film addFilm(Film film) {
+    @PostMapping("/add")
+    public Film addFilm(@RequestBody Film film) {
         filmService.add(film);
         return film;
     }
