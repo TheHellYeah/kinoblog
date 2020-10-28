@@ -1,7 +1,6 @@
 package com.example.demo.model.entities;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
 
 import javax.persistence.*;
 import java.util.List;
