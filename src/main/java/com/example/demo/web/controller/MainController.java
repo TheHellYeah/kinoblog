@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/")
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin("https://kinoblog-frontend.herokuapp.com")
 public class MainController {
 
     private FilmService filmService;
