@@ -33,8 +33,8 @@ public class UserServiceImpl implements UserService {
         if(canRegister(user)) {
             user.setRoles(Collections.singleton(Role.USER));
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userRepository.save(user);
             if(user.getAvatar() == null) user.setAvatar(defaultAvatar);
+            userRepository.save(user);
             return true;
         }
         return false;

@@ -32,13 +32,13 @@ public class AmazonBackupService implements BackupService {
 
     @PostConstruct
     private void connect() {
-        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
-        this.client =
-                AmazonS3ClientBuilder
-                        .standard()
-                        .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                        .withRegion(Regions.EU_CENTRAL_1)
-                        .build();
+//        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+//        this.client =
+//                AmazonS3ClientBuilder
+//                        .standard()
+//                        .withCredentials(new AWSStaticCredentialsProvider(credentials))
+//                        .withRegion(Regions.EU_CENTRAL_1)
+//                        .build();
     }
 
     @Override
@@ -46,7 +46,7 @@ public class AmazonBackupService implements BackupService {
     public void backup() {
         UserListDTO usersDTO = new UserListDTO(userService.getAll());
         File file = XMLMarshaller.marshall(usersDTO);
-         client.putObject(bucketName, file.getName(), file);
+        client.putObject(bucketName, file.getName(), file);
     }
 
     //TODO
