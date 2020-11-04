@@ -13,11 +13,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 
 @Service
 public class AmazonBackupService implements BackupService {
 
+    @Autowired
     private UserService userService;
     private AmazonS3 client;
 
@@ -28,9 +30,15 @@ public class AmazonBackupService implements BackupService {
     @Value("${amazon.bucket-name}")
     private String bucketName;
 
-    public AmazonBackupService(UserService userService) {
-        this.userService = userService;
-        this.connectToAmazon();
+    @PostConstruct
+    private void connect() {
+        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+        this.client =
+                AmazonS3ClientBuilder
+                        .standard()
+                        .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                        .withRegion(Regions.EU_CENTRAL_1)
+                        .build();
     }
 
     @Override
@@ -45,15 +53,5 @@ public class AmazonBackupService implements BackupService {
     @Override
     public void restore() {
 
-    }
-
-    private void connectToAmazon() {
-        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
-        this.client =
-                AmazonS3ClientBuilder
-                        .standard()
-                        .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                        .withRegion(Regions.EU_CENTRAL_1)
-                        .build();
     }
 }
