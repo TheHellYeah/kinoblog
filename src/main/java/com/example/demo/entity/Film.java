@@ -1,4 +1,4 @@
-package com.example.demo.model.entities;
+package com.example.demo.entity;
 
 import lombok.Data;
 
@@ -23,7 +23,7 @@ public class Film {
     @ElementCollection
     @CollectionTable(name = "genres", joinColumns = @JoinColumn(name = "film_id"))
     @Enumerated(value = EnumType.STRING)
-    private List<FilmGenre> genres;
+    private List<Genre> genres;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> reviews;

@@ -1,6 +1,6 @@
-package com.example.demo.model.service;
+package com.example.demo.service;
 
-import com.example.demo.model.entities.Film;
+import com.example.demo.entity.Film;
 
 import java.util.List;
 
