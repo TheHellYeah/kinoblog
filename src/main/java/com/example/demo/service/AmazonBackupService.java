@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 public class AmazonBackupService implements BackupService {
@@ -22,6 +25,7 @@ public class AmazonBackupService implements BackupService {
     @Autowired
     private UserService userService;
     private AmazonS3 client;
+    private final DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 
     @Value("${amazon.access-key}")
     private String accessKey;
@@ -32,13 +36,13 @@ public class AmazonBackupService implements BackupService {
 
     @PostConstruct
     private void connect() {
-//        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
-//        this.client =
-//                AmazonS3ClientBuilder
-//                        .standard()
-//                        .withCredentials(new AWSStaticCredentialsProvider(credentials))
-//                        .withRegion(Regions.EU_CENTRAL_1)
-//                        .build();
+        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+        this.client =
+                AmazonS3ClientBuilder
+                        .standard()
+                        .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                        .withRegion(Regions.EU_CENTRAL_1)
+                        .build();
     }
 
     @Override
@@ -46,7 +50,7 @@ public class AmazonBackupService implements BackupService {
     public void backup() {
         UserListDTO usersDTO = new UserListDTO(userService.getAll());
         File file = XMLMarshaller.marshall(usersDTO);
-        client.putObject(bucketName, file.getName(), file);
+        client.putObject(bucketName, df.format(new Date()), file);
     }
 
     //TODO

@@ -45,10 +45,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByUsernameAndPassword(user.getUsername(), passwordEncoder.encode(user.getPassword()));
     }
 
-    private boolean canRegister(User user) {
-        return !userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail());
-    }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
@@ -57,4 +53,9 @@ public class UserServiceImpl implements UserService {
         }
         return (UserDetails) user;
     }
+
+    private boolean canRegister(User user) {
+        return !userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail());
+    }
+
 }

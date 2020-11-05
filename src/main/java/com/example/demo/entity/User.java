@@ -1,14 +1,13 @@
 package com.example.demo.entity;
 
+import com.example.demo.utils.DateTimeAdapter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
 import java.util.Set;
 
@@ -25,16 +24,23 @@ public class User {
     @XmlAttribute
     private long id;
 
+    @XmlElement(name = "username")
     private String username;
+    @XmlTransient
     private String password;
+    @XmlElement(name="email")
     private String email;
+    @XmlElement(name="avatar")
     private String avatar;
 
     @Temporal(value = TemporalType.DATE)
+    @XmlElement(name="registration")
+    @XmlJavaTypeAdapter(DateTimeAdapter.class)
     private Date registration;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(value = EnumType.STRING)
+    @XmlElement(name = "roles")
     private Set<Role> roles;
 }
