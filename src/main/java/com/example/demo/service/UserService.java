@@ -1,13 +1,14 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import com.example.demo.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface UserService extends UserDetailsService {
+public interface UserService {
 
     List<User> getAll();
-    boolean register(User user);
-    boolean isUserExists(User user);
+    Optional<User> getById(Long id);
+    void deleteAll();
+    void saveAll(Iterable<User> users);
 }

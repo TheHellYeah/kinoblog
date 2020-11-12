@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.Film;
+import com.example.demo.model.Film;
 import com.example.demo.repository.FilmRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +23,9 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public void add(Film film) {
-        if(film.getPreview() == null) film.setPreview(defaultPreview);
+        if(film.getPreview() == null) {
+            film.setPreview(defaultPreview);
+        }
         filmRepository.save(film);
     }
 }

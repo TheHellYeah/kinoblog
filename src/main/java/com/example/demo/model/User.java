@@ -1,7 +1,6 @@
-package com.example.demo.entity;
+package com.example.demo.model;
 
-import com.example.demo.utils.DateTimeAdapter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.demo.utils.XmlDateTimeAdapter;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -26,7 +25,7 @@ public class User {
 
     @XmlElement(name = "username")
     private String username;
-    @XmlTransient
+    @XmlElement(name = "password")
     private String password;
     @XmlElement(name="email")
     private String email;
@@ -35,7 +34,7 @@ public class User {
 
     @Temporal(value = TemporalType.DATE)
     @XmlElement(name="registration")
-    @XmlJavaTypeAdapter(DateTimeAdapter.class)
+    @XmlJavaTypeAdapter(XmlDateTimeAdapter.class)
     private Date registration;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -43,4 +42,13 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     @XmlElement(name = "roles")
     private Set<Role> roles;
+
+    @Override
+    public String toString() {
+        return "User {" +
+                " username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", roles=" + roles +
+                " }";
+    }
 }

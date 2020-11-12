@@ -1,5 +1,6 @@
-package com.example.demo.entity;
+package com.example.demo.security;
 
+import com.example.demo.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,29 +12,29 @@ import java.util.List;
 public class UserPrincipal implements UserDetails {
 
     private User user;
-    private List<GrantedAuthority> roles = new ArrayList<>();
+    private List<GrantedAuthority> authorities = new ArrayList<>();
 
     public UserPrincipal(User user) {
         this.user = user;
-        for(Role role : user.getRoles()) {
-            GrantedAuthority auth = new SimpleGrantedAuthority(role.getAuthority());
-            roles.add(auth);
-        }
+        user.getRoles().forEach(role -> {
+            GrantedAuthority authority = new SimpleGrantedAuthority(role.getAuthority());
+            authorities.add(authority);
+        });
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles;
+        return this.authorities;
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return this.user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return this.user.getUsername();
     }
 
     @Override

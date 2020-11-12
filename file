@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<users>
+    <user id="1">
+        <firstName>arten</firstName>
+        <secondName>aa</secondName>
+        <verified>false</verified>
+    </user>
+    <user id="2">
+        <firstName>artee</firstName>
+        <secondName>as</secondName>
+        <verified>false</verified>
+    </user>
+    <user id="3">
+        <firstName>artee</firstName>
+        <secondName>asa</secondName>
+        <verified>false</verified>
+    </user>
+</users>

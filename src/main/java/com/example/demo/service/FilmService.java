@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.Film;
+import com.example.demo.model.Film;
 
 import java.util.List;
 
