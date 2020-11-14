@@ -1,5 +1,6 @@
 package com.example.demo.configuration;
 
+import com.example.demo.security.CustomAuthenticationEntryPoint;
 import com.example.demo.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -39,19 +41,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new JwtAuthenticationFilter();
     }
 
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new CustomAuthenticationEntryPoint();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http
+                .authorizeRequests()
+                .antMatchers("/", "/login", "/register", "/film/*").permitAll()
+                .anyRequest().authenticated();
+        http
+                .csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
+                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
-                .authorizeRequests()
-                .antMatchers("/", "/login", "/register", "/add", "/admin/restore").permitAll()
-                .anyRequest().authenticated();
-
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+                .cors();
     }
 
     @Override

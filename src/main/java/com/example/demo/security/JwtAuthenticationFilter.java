@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -28,7 +29,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UserPrincipal principal = userDetailsService.loadUserByUsername(username);
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.info("Authorized request from user " + username);
         }
         chain.doFilter(request, response);
     }
