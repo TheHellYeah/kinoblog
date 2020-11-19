@@ -10,7 +10,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://kinoblog-app.herokuapp.com")
+                .allowedOrigins("https://kinoblog-app.herokuapp.com", "http://kinoblog-app.herokuapp.com")
                 .allowedMethods("*");
     }
 }
