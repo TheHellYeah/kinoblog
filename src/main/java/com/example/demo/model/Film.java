@@ -14,9 +14,12 @@ public class Film {
     private long id;
 
     private String name;
+    @Column(length = 1000)
+    private String description;
     private String preview; //путь к картинке
     private String trailer; //путь к видео на ют
     private short length;  //мин.
+    private short releaseYear;
     private long budget;
     private float rating; //TODO
 
@@ -27,4 +30,8 @@ public class Film {
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> reviews;
+
+    public void addReview(Review review) {
+        reviews.add(review);
+    }
 }

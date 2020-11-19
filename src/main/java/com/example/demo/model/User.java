@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -43,6 +44,9 @@ public class User {
     @XmlElement(name = "roles")
     private Set<Role> roles;
 
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Review> reviews;
+
     @Override
     public String toString() {
         return "User {" +
@@ -50,5 +54,9 @@ public class User {
                 ", email='" + email + '\'' +
                 ", roles=" + roles +
                 " }";
+    }
+
+    public void addReview(Review review) {
+        reviews.add(review);
     }
 }

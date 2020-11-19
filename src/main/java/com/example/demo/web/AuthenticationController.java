@@ -27,7 +27,6 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody User user) {
         if(authenticationService.canRegister(user)) {
-            authenticationService.register(user);
             AuthenticationResponse response = authenticationService.register(user);
             return ResponseEntity.ok().body(response);
         }
