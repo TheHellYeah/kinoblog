@@ -2,6 +2,9 @@ package com.example.demo.web;
 
 import com.example.demo.model.Film;
 import com.example.demo.service.FilmService;
+import com.example.demo.utils.FilmFilter;
+import com.example.demo.utils.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,7 +20,11 @@ public class MainController {
     private FilmService filmService;
 
     @GetMapping
-    public List<Film> indexPage() {
+    @JsonView(Views.Public.class)
+    public List<Film> indexPage(FilmFilter filter) {
+        if(!filter.isEmpty()) {
+            return filmService.getAllByFilter(filter);
+        }
         return filmService.getAll();
     }
 }

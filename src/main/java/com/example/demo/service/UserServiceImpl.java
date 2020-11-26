@@ -3,15 +3,19 @@ package com.example.demo.service;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -23,24 +27,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getById(Long id) {
-        return userRepository.findById(id);
-    }
-
-    @Override
-    public void deleteAll() {
-        userRepository.deleteAll();
-    }
-
-    @Override
-    public void saveAll(Iterable<User> users) {
-        userRepository.saveAll(users);
-    }
-
-    @PostConstruct
-    public void init() {
-        User user = userRepository.findByUsername("Artem222");
-        user.setRoles(Collections.singleton(Role.ADMIN));
+    public void appointUser(long userId, Role role) {
+        User user = userRepository.getOne(userId);
+        user.getRoles().add(role);
         userRepository.save(user);
+        log.info("User {} appointed to role {}", user.getUsername(), role);
+    }
+
+    @Override
+    public void dismiss(long userId) {
+        User user = userRepository.getOne(userId);
+        user.setRoles(new HashSet<>());
+        user.getRoles().add(Role.USER);
+        userRepository.save(user);
+        log.info("User {} dismissed", user.getUsername());
     }
 }

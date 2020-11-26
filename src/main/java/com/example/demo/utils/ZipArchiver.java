@@ -18,7 +18,7 @@ import java.util.zip.ZipOutputStream;
 @Slf4j
 public class ZipArchiver implements Archiver {
 
-    private static final String FILE_NAME = "backup.zip";
+    private static final String FILE_NAME = "backup";
 
     @Override
     public File archiveAll(List<File> files) {

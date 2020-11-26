@@ -1,6 +1,8 @@
 package com.example.demo.model;
 
+import com.example.demo.utils.Views;
 import com.example.demo.utils.XmlDateTimeAdapter;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,30 +23,32 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @XmlAttribute
+    @JsonView(Views.Public.class)
     private long id;
 
-    @XmlElement(name = "username")
+    @JsonView(Views.Public.class)
     private String username;
-    @XmlElement(name = "password")
+
     private String password;
-    @XmlElement(name="email")
+
+    @JsonView(Views.Public.class)
     private String email;
-    @XmlElement(name="avatar")
+
+    @JsonView(Views.Public.class)
     private String avatar;
 
     @Temporal(value = TemporalType.DATE)
-    @XmlElement(name="registration")
-    @XmlJavaTypeAdapter(XmlDateTimeAdapter.class)
+    @JsonView(Views.Public.class)
     private Date registration;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(value = EnumType.STRING)
-    @XmlElement(name = "roles")
+    @JsonView(Views.Public.class)
     private Set<Role> roles;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonView(Views.UserPage.class)
     private List<Review> reviews;
 
     @Override

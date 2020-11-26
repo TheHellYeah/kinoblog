@@ -1,6 +1,7 @@
 package com.example.demo.utils;
 
 
+import com.example.demo.model.Film;
 import com.example.demo.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,45 +22,45 @@ public class JaxbMarshaller implements XmlMarshaller {
     private final static String FILE_EXTENSION = ".xml";
 
     @Override
-    public File marshal(User user) {
-        File file = new File(user.getUsername() + FILE_EXTENSION);
+    public File marshal(Film film) {
+        File file = new File(film.getName() + FILE_EXTENSION);
         try {
-            JAXBContext context = JAXBContext.newInstance(User.class);
+            JAXBContext context = JAXBContext.newInstance(Film.class);
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(user, file);
+            marshaller.marshal(film, file);
 
         } catch (JAXBException e) {
-            log.warn("Error while marshalling object {}, error: {}", user, e.getMessage());
+            log.warn("Error while marshalling object {}, error: {}", film, e.getMessage());
         }
         return file;
     }
 
     @Override
-    public List<File> marshal(List<User> users) {
+    public List<File> marshal(List<Film> films) {
         List<File> marshalledFiles = new ArrayList<>();
-        users.forEach(user -> marshalledFiles.add(this.marshal(user)));
+        films.forEach(film -> marshalledFiles.add(this.marshal(film)));
         return marshalledFiles;
     }
 
     @Override
-    public User unmarshal(File marshalled) {
-        User user = null;
+    public Film unmarshal(File marshalled) {
+        Film film = null;
         try{
-            JAXBContext context = JAXBContext.newInstance(User.class);
+            JAXBContext context = JAXBContext.newInstance(Film.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            user = (User) unmarshaller.unmarshal(marshalled);
+            film = (Film) unmarshaller.unmarshal(marshalled);
 
         } catch (JAXBException e) {
             log.warn("Error while unmarshalling file {}, error: {}", marshalled.getName(), e.getMessage());
         }
-        return user;
+        return film;
     }
 
     @Override
-    public List<User> unmarshall(List<File> marshalled) {
-        List<User> users = new ArrayList<>();
-        marshalled.forEach(file -> users.add(this.unmarshal(file)));
-        return users;
+    public List<Film> unmarshall(List<File> marshalled) {
+        List<Film> films = new ArrayList<>();
+        marshalled.forEach(file -> films.add(this.unmarshal(file)));
+        return films;
     }
 }

@@ -11,6 +11,7 @@ import java.util.Set;
 public class AuthenticationResponse {
 
     private String token;
+    private Long id;
     private String username;
     private String email;
     private String avatar;
@@ -18,6 +19,7 @@ public class AuthenticationResponse {
     private Set<Role> roles;
 
     public AuthenticationResponse(User user, String token) {
+        this.id = user.getId();
         this.token = token;
         this.username = user.getUsername();
         this.email = user.getEmail();

@@ -2,6 +2,8 @@ package com.example.demo.web;
 
 import com.example.demo.model.User;
 import com.example.demo.security.UserPrincipal;
+import com.example.demo.utils.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @GetMapping("/{id:\\d+}")
+    @JsonView(Views.UserPage.class)
     public ResponseEntity userPage(@AuthenticationPrincipal UserPrincipal principal, @PathVariable("id") User user) {
         if(user != null) {
             return ResponseEntity.ok(user);
         }
-        return ResponseEntity.badRequest().body("Данного пользователя не найдено"); //TODO
+        return ResponseEntity.badRequest().body("Данного пользователя не найдено");
     }
 }

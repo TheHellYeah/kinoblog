@@ -10,7 +10,12 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.example.demo.model.Film;
+import com.example.demo.model.Review;
 import com.example.demo.model.User;
+import com.example.demo.repository.FilmRepository;
+import com.example.demo.repository.ReviewRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.utils.Archiver;
 import com.example.demo.utils.XmlMarshaller;
 import lombok.extern.slf4j.Slf4j;
@@ -34,14 +39,16 @@ import java.util.List;
 public class AmazonBackupService implements BackupService {
 
     @Autowired
-    private UserService userService;
+    private FilmRepository filmRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private XmlMarshaller xmlMarshaller;
     @Autowired
     private Archiver archiver;
 
     private AmazonS3 client;
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("d-MM-yyyy H:m:s");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("d-MM-yyyy");
 
     @Value("${amazon.access-key}")
     private String accessKey;
@@ -63,26 +70,26 @@ public class AmazonBackupService implements BackupService {
             log.warn("There is no available buckets with name {}. Creating new bucket.", bucketName);
             client.createBucket(bucketName);
         }
+        log.info("Successfully connected to Amazon S3 service");
     }
 
     @Override
     @Scheduled(cron = "0 0 12 * * *") //Cron-expression, 12 часов дня каждый день
     public void backup() {
-        List<User> users = userService.getAll();
-        List<File> marshalledUsers = xmlMarshaller.marshal(users);
-        File zipBackupFile = archiver.archiveAll(marshalledUsers);
-        String fileName = zipBackupFile.getName() + " " + dateFormat.format(new Date());
+        List<Film> films = filmRepository.findAll();
+        List<File> marshalledFilms = xmlMarshaller.marshal(films);
+        File zipBackupFile = archiver.archiveAll(marshalledFilms);
+        String fileName = zipBackupFile.getName() + "-" + dateFormat.format(new Date()) + ".zip";
 
-        client.putObject(bucketName, fileName , zipBackupFile);
-        log.info("Backup {} saved. Total objects backuped: {}", fileName, users.size());
-       //TODO this.deleteOutdatedBackup();
+        client.putObject(bucketName, fileName, zipBackupFile);
+        log.info("Backup {} saved. Total objects backuped: {}", fileName, films.size());
     }
 
     @Override
     public List<String> getAvailableBackups() {
         List<String> availableBackups = new ArrayList<>();
         ObjectListing bucketObjects = client.listObjects(bucketName);
-        for(S3ObjectSummary object : bucketObjects.getObjectSummaries()) {
+        for (S3ObjectSummary object : bucketObjects.getObjectSummaries()) {
             availableBackups.add(object.getKey());
         }
         return availableBackups;
@@ -92,19 +99,24 @@ public class AmazonBackupService implements BackupService {
     public void restore(String backupName) {
         File zippedBackupFile = load(backupName);
         List<File> unzippedFiles = archiver.unarchive(zippedBackupFile);
-        List<User> users = xmlMarshaller.unmarshall(unzippedFiles);
-        userService.deleteAll();
-        userService.saveAll(users);
-        log.info("Restored database from file {}", backupName);
+        List<Film> films = xmlMarshaller.unmarshall(unzippedFiles);
+        List<User> users = userRepository.findAll();
+        users.forEach(u -> u.getReviews().clear());
+        List<Film> currentFilms = filmRepository.findAll();
+        currentFilms.forEach(f -> f.getReviews().clear());
+        filmRepository.deleteAll();
+        filmRepository.saveAll(films);
+        log.info("Restored database from file {}. Films restored: {}", backupName, films.size());
     }
 
     private File load(String fileName) {
         S3Object object = client.getObject(bucketName, fileName);
         File file = new File(object.getKey());
         try (S3ObjectInputStream inputStream = object.getObjectContent();
-             FileOutputStream outputStream = new FileOutputStream(file)) {
+             FileOutputStream outputStream = new FileOutputStream(file);) {
             IOUtils.copy(inputStream, outputStream);
-        } catch (IOException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             log.warn("Error while loading file {} from amazon service: {}", fileName, e.getMessage());
         }
         return file;
