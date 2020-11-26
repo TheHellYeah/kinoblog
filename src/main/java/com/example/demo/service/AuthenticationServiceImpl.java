@@ -6,11 +6,13 @@ import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.Date;
 
@@ -27,6 +29,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Value("${user.default-avatar}")
     private String defaultAvatar;
+
+    @Value("$user.pass")
+    private String pass;
+
+    @PostConstruct
+    public void init() {
+        User user = new User();
+        user.setUsername("Artem222");
+        user.setEmail("123");
+        user.setPassword(passwordEncoder.encode(pass));
+        user.setRoles(Collections.singleton(Role.ADMIN));
+        userRepository.save(user);
+    }
 
     @Override
     public AuthenticationResponse login(User logged) {
