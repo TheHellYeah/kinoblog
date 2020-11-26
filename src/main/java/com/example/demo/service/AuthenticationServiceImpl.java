@@ -30,7 +30,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Value("${user.default-avatar}")
     private String defaultAvatar;
 
-    @Value("$user.pass")
+    @Value("${user.pass}")
     private String pass;
 
     @PostConstruct
